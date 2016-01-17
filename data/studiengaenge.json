@@ -1,0 +1,17 @@
+{
+  "1": {
+    "bezeichnung": "Informatik",
+    "kurzbezeichnung": "Info",
+    "anzahlSemester": 6
+  },
+  "2": {
+    "bezeichnung": "Maschinenbau",
+    "kurzbezeichnung": "MaschBau",
+    "anzahlSemester": 6
+  },
+  "3": {
+    "bezeichnung": "Elektrotechnik",
+    "kurzbezeichnung": "Etechnik",
+    "anzahlSemester": 6
+  }
+}

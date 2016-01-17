@@ -1,10 +1,8 @@
 # coding: utf-8
 import os
 import cherrypy
-import imp
-from app import application, studierender
-# from app.api import studierender as studiengang_api
-beitraege_api = imp.load_source("app.api", "app/api/studierender.py")
+from app import application, studierender, template, user, database, mhpflege
+from app.api import studiengang, modulhandbuch, lehrveranstaltung, login, modul
 
 def validate_password(realm, username, password):
 	users = application.db.load_user()
@@ -29,6 +27,7 @@ def main():
 	cherrypy.engine.timeout_monitor.unsubscribe()
 
 	cherrypy.tree.mount(application.Application_cl(), '/', {"/": {}})
+
 	css_handler = cherrypy.tools.staticdir.handler(section="/", dir='/content/css')
 	cherrypy.tree.mount(css_handler, '/css', {
 		'/': {
@@ -46,11 +45,47 @@ def main():
 		}
 	})
 
-	cherrypy.tree.mount(studierender.Studierender_cl(), '/studierender', {
+	cherrypy.tree.mount(studierender.Studierender_cl(), '/studierender', {"/": {}})
+	cherrypy.tree.mount(mhpflege.MhPflege_cl(), '/mhpflege', {"/": {}})
+
+	cherrypy.tree.mount(studiengang.Studiengang_cl(), '/studiengang', {
 		'/': {
-			'tools.staticdir.root': current_dir
+			'request.dispatch': cherrypy.dispatch.MethodDispatcher()
 		}
 	})
+
+	cherrypy.tree.mount(modulhandbuch.Modulhandbuch_cl(), '/modulhandbuch', {
+		'/': {
+			'request.dispatch': cherrypy.dispatch.MethodDispatcher()
+		}
+	})
+
+	cherrypy.tree.mount(lehrveranstaltung.Lehrveranstaltung_cl(), '/lehrveranstaltung', {
+		'/': {
+			'request.dispatch': cherrypy.dispatch.MethodDispatcher()
+		}
+	})
+
+	cherrypy.tree.mount(modul.Modul_cl(), '/modul', {
+		'/': {
+			'request.dispatch': cherrypy.dispatch.MethodDispatcher()
+		}
+	})
+
+	cherrypy.tree.mount(login.Login_cl(), '/login', {
+		'/': {
+			'request.dispatch': cherrypy.dispatch.MethodDispatcher()
+		}
+	})
+
+	cherrypy.tree.mount(template.Template_cl(), '/template', {
+		'/': {
+			'request.dispatch': cherrypy.dispatch.MethodDispatcher()
+		}
+	})
+
+	cherrypy.Application.db = database.Database_cl()
+	cherrypy.Application.user = user.User_cl()
 
 	# Start server
 	cherrypy.engine.start()

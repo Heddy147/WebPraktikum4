@@ -1,0 +1,18 @@
+tr.active {
+	background-color: red;
+}
+
+table {
+	width: 100%;
+	border: 1px solid black;
+	border-collapse: collapse;
+}
+
+table th {
+	background-color: #333;
+	color: white;
+}
+
+table td, table th {
+	border: 1px solid black;
+}

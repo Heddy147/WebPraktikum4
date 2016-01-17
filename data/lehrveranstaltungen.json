@@ -1,0 +1,24 @@
+{
+  "1": {
+    "1": {
+      "bezeichnung": "Übung",
+      "semester": "1",
+      "modul": "1"
+    },
+    "2": {
+      "bezeichnung": "Vorlesung",
+      "semester": "1",
+      "modul": "1"
+    },
+    "3": {
+      "bezeichnung": "Übung",
+      "semester": "2",
+      "modul": "2"
+    },
+    "4": {
+      "bezeichnung": "Vorlesung",
+      "semester": "2",
+      "modul": "2"
+    }
+  }
+}

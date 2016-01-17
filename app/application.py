@@ -7,6 +7,10 @@ class Application_cl(object):
 
 	@cherrypy.expose
 	def default(self, *arglist, **kwargs):
-		raise cherrypy.HTTPRedirect("/studierender/index")
+		raise cherrypy.HTTPRedirect("/studierender")
+
+	def studierender(self):
+		with open('content/studierender.html', 'r') as f:
+			return f.read()
 
 # EOF

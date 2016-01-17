@@ -1,0 +1,16 @@
+{
+  "1": {
+    "bezeichnung": "Mathematik 1",
+    "kurzbezeichnung": "MAT1",
+    "sws": "3",
+    "kreditpunkte": 4,
+    "beschreibung": "Dies ist Mathe 1"
+  },
+  "2": {
+    "bezeichnung": "Mathematik 2",
+    "kurzbezeichnung": "MAT2",
+    "sws": "3",
+    "kreditpunkte": 4,
+    "beschreibung": "Dies ist Mathe 2"
+  }
+}
