@@ -1,7 +1,7 @@
 {
   "dominik": {
-    "rolle": "admin",
+    "rolle": "mod",
     "passwort": "dominik123",
-    "module": []
+    "module": ["1"]
   }
 }

@@ -46,6 +46,16 @@ class User_cl(object):
 
 		return True
 
+	def checkAccess(self, module_name, method_name, modul_id=None):
+		if method_name == 'GET' or self.is_admin() == True:
+			return True
+
+		if self.is_logged_in() == True:
+			if module_name == 'modul' and method_name == 'PUT' and modul_id != None and modul_id in self.user_obj['module']:
+				return True
+
+		return False
+
 	def logout(self):
 		cookie = cherrypy.request.cookie
 		if "user" in cookie:

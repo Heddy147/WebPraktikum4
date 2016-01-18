@@ -14,6 +14,7 @@
 	</tr>
 	@endfor@
 </table>
+<button type='button' data-action='studiengang.create'>Hinzufügen</button>
 <button type='button' class='function' data-function='editStudiengang'>Bearbeiten</button>
 <button type='button' class='function' data-function='deleteStudiengang'>Löschen</button>
 <button type='button' class='function' data-function='viewModules'>Module</button>

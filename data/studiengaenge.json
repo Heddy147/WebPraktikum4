@@ -1,17 +1,1 @@
-{
-  "1": {
-    "bezeichnung": "Informatik",
-    "kurzbezeichnung": "Info",
-    "anzahlSemester": 6
-  },
-  "2": {
-    "bezeichnung": "Maschinenbau",
-    "kurzbezeichnung": "MaschBau",
-    "anzahlSemester": 6
-  },
-  "3": {
-    "bezeichnung": "Elektrotechnik",
-    "kurzbezeichnung": "Etechnik",
-    "anzahlSemester": 6
-  }
-}
+{"3": {"kurzbezeichnung": "WiInfo", "anzahlSemester": "10", "bezeichnung": "Wirtschaftsinformatik"}, "2": {"kreditpunkteges": 0, "anzahlSemester": "8", "kurzbezeichnung": "MaschBau", "bezeichnung": "Maschinenbau"}, "1": {"kreditpunkteges": 8, "anzahlSemester": "10", "kurzbezeichnung": "Info", "bezeichnung": "Informatik"}}

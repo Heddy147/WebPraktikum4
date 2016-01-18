@@ -16,3 +16,8 @@ table th {
 table td, table th {
 	border: 1px solid black;
 }
+
+label {
+	display: block;
+	font-weight: bold;
+}

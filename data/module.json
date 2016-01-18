@@ -1,16 +1,1 @@
-{
-  "1": {
-    "bezeichnung": "Mathematik 1",
-    "kurzbezeichnung": "MAT1",
-    "sws": "3",
-    "kreditpunkte": 4,
-    "beschreibung": "Dies ist Mathe 1"
-  },
-  "2": {
-    "bezeichnung": "Mathematik 2",
-    "kurzbezeichnung": "MAT2",
-    "sws": "3",
-    "kreditpunkte": 4,
-    "beschreibung": "Dies ist Mathe 2"
-  }
-}
+{"2": {"kurzbezeichnung": "MAT2", "lehrveranstaltungen": {"7": {"semester": "3", "bezeichnung": "Praktikum", "modul": "2"}, "4": {"semester": "2", "bezeichnung": "Vorlesung", "modul": "2"}, "3": {"semester": "2", "bezeichnung": "\u00c3\u0153bung", "modul": "2"}}, "sws": "3", "beschreibung": "Dies ist Mathe 2", "kreditpunkte": 4, "bezeichnung": "Mathematik 2"}, "3": {"kurzbezeichnung": "DN\u00dc", "lehrveranstaltungen": {"6": {"semester": "3", "bezeichnung": "\u00dcbung", "modul": "3"}}, "sws": "4", "beschreibung": "Modul zu DN\u00dc", "kreditpunkte": 2, "bezeichnung": "Datennetze und -\u00dcbertragung"}, "1": {"beschreibung": "Dies ist Mathe 1", "kreditpunkte": 10, "kurzbezeichnung": "MATH1", "sws": "3", "bezeichnung": "Mathematik 1"}}
