@@ -1,8 +1,8 @@
 <button type="button" data-action="studiengaenge">Zurück</button>
-<form id='form_login' action='' method='POST'>
+<form id='form_login' action='##' method='POST'>
 	<p>
 		<label for='benutzername'>Benutzername</label>
-		<input required type='benutzername' id='benutzername' name='benutzername' />
+		<input required type='text' id='benutzername' name='benutzername' />
 	</p>
 	<p>
 		<label for='passwort'>Passwort</label>

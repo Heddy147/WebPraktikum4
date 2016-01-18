@@ -1,6 +1,6 @@
 {
   "dominik": {
-    "rolle": "mod",
+    "rolle": "admin",
     "passwort": "dominik123",
     "module": ["1"]
   }
