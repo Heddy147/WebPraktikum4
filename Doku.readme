@@ -1,0 +1,377 @@
+#Einleitung#
+
+##Lösung##
+
+#Server#
+
+##REST-Interface## {#rest-interface}
+Damit ein Server REST-Konform gestaltet ist, muss es mit verschiedensten HTTP-Methoden zurecht kommen und die für die jeweilige HTTP-Methode auszuführende Methode ausführen. Je nachdem welche Daten bearbeitet werden, müssen verschiedene URLs aufgerufen werden. Zusätzlich muss die URL mit der richtigen HTTP-Methode aufgerufen werden. Folgende HTTP-Methoden werden von unserem Server unterstützt:
+
+* **GET**: Daten werden vom Server abgefragt. Wenn eine ID o.ä. hinter der aufzurufenden URL angehangen wird, wird nach einem Datensatz mit der übergebenen ID gesucht. Wurde ein Datensatz gefunden, wird dieser zurückgegeben. Wenn keine ID angegeben wurde, werden jegliche Datensätze zurückgegeben.
+* **POST**: Diese Methode ist für das Anlegen neue Datensätze zuständig. Hierfür werden die erforderlichen Daten als Parameter übergeben.
+* **PUT**: Diese Methode wird zum aktualisieren vorhandener Datensätze benutzt. Dafür MUSS eine ID (o.ä.) übergeben werden. Zusätzlich werden die neuen Daten als Parameter mit übergeben.
+* **DELETE**: Um Datensätze zu löschen, wird diese Methode verwendet. Dazu MUSS die ID angegeben werden.
+
+##Module##
+
+###Allgemeingültige Informationen###
+Die Module, welche nur mit der REST-Methodik angesprochen werden sollten, enthalten für die jeweiligen HTTP-Methoden jeweils eine Methode. Diese Methoden heißen jeweils gleich den HTTP-Methoden (siehe dazu Dokumentation REST-Dispatching von CherryPy).
+
+####Informationen GET-Methoden#### {#infos-get-methoden}
+Bei der GET-Methode kann, muss aber keine ID übergeben werden. Wenn keine ID übergeben wird, werden alle Datensätze des Moduls zurückgegeben. Sollte eine ID übergeben werden, wird der jeweilige Datensatz zu der übergebenen ID zurückgegeben, falls vorhanden.
+
+####Informationen POST-Methode#### {#infos-post-methoden}
+Die POST-Methoden legen einen Datensatz zum jeweiligen Modul an. Die notwendigen Daten werden als Parameter automatisch mit übergeben. Die Parameternamen müssen mit den HTTP-Parameternamen übereinstimmen.
+Die POST-Methoden strukturieren die Daten so, dass die Daten direkt an das Datenbankobjekt übergeben werden können und das DB-Objekt einen Eintrag anlegen kann.
+
+####Informationen PUT-Methoden#### {#infos-put-methoden}
+PUT-Methoden aktualisieren einen Datensatz. Dies ist analog zur POST-Methode. Es wird lediglich ein weiterer Parameter "id" erwartet. Mit diesem Parameter wird der Datensatz geladen, welcher aktualisiert werden soll. Ansonsten wird alles so abgehandelt wie in [Informationen POST-Methoden](#infos-post-methoden) beschrieben. Es wird jedoch kein Datensatz angelegt, sondern nur aktualisiert.
+
+####Informationen DELETE-Methoden#### {#infos-delete-methoden}
+Hier wird lediglich eine ID erwartet, damit dieser Datensatz aus den Daten gelöscht werden kann. Auch hier wird die eigentliche Löschung über das Datenbankobjekt realisiert.
+
+###Datenbank###
+Um Daten von den Dateien zu holen oder Daten zu speichern, wurden alle nötigen Methoden in [eine Klasse](#class-database) implementiert.
+Für jeden verschiedenen Datensatz ([Daten](#daten)) wurden Methoden wie "Alle Laden", "Einen Laden", "Einen Speichern" oder "Einen Löschen" hinzugefügt.
+Werden Daten geladen, werden diese als Dict-Objekt zurückgegeben.
+Außerdem wurden spezielle Methoden wie "Lade alle Module von Studiengang XY" hinzugefügt. Eine detaillierte Auflistung ist [weiter unten](#methods-database) aufzufinden.
+
+####Klasse "database.py"#### {#class-database}
+Zu finden unter ```app/database.py```
+
+Jegliche "save"- und "delete"-Methoden bearbeiten lediglich die Daten, welche in den Dateien zu finden sind. Danach wird der neue Inhalt der Dateien an die jeweilige "save_*_file"-Methode übergeben, welche das eigentliche Speichern übernimmt.
+
+**Methoden** {#methods-database}
+```python 
+load_user()
+```
+Gibt alle eingetragenen Benutzer inkl. Passwort und Rechte zurück.
+```python
+load_studiengaenge()
+```
+Lädt alle Studiengänge. Zu jedem Studiengang werden automatisch die maximal möglichen Kreditpunkte berechnet und dem Dict-Objekt beigefügt.
+```python
+load_studiengang(id)
+```
+Lädt einen Studiengang anhand einer übergebenen ID.
+Außerdem wird zum Dict-Objekt eine Eigenschaft "kreditpunkte" hinzugefügt. Diese beinhaltet die maximal möglichen Kreditpunkte, welche automatisch berechnet werden.
+```python
+create_studiengang(data)
+```
+Erzeugt einen neuen Datensatz in Studiengang. Dabei werden die Daten aus "data" verwendet.
+Für den neuen Datensatz werden die Kreditpunkte nicht berechnet, da das Speichern dieser Eigenschaft keinerlei Auswirkung hat.
+```python
+delete_studiengang(id)
+```
+Löscht einen Studiengang anhand einer übergebenen ID.
+```python
+save_studiengang(id, data)
+```
+Speichert einen vorhandenen Studiengang. Vorher werden die übergebenen Daten aus "data" am richtigen Datensatz gesetzt.
+Die zuvor berechneten Kreditpunkte werden zwar mit abgespeichert, haben aber keinerlei Auswirkung, da diese immer wieder neu berechnet werden.
+```python
+save_studiengaenge_file(content)
+```
+Speichert alle Änderungen in die dafür vorgesehene Datei "studiengaenge.json".
+```python
+load_modules()
+```
+Lädt alle Module.
+```python
+load_module(string id)
+```
+Lädt ein Modul anhang einer übergebenen ID.
+```python
+delete_module(id)
+```
+Löscht ein Modul anhand einer übergebenen ID.
+```python
+save_module(id, data)
+```
+Speicher ein Modul anhand einer übergebenen ID. Dabei werden die übergebenen Daten "data" am richtigen Datensatz gesetzt.
+```python
+save_modules_file(content)
+```
+Speichert alle Änderungen in die dafür vorgesehene Datei "module.json".
+```python
+load_lehrveranstaltungen()
+```
+Lädt alle Lehrveranstaltungen.
+```python
+load_lehrveranstaltung(id)
+```
+Lädt eine Lehrveranstaltung anhand einer übergebenen ID.
+```python
+delete_lehrveranstaltung(id)
+```
+Löscht eine Lehrveranstaltung anhand einer übergebenen ID.
+```python
+save_lehrveranstaltung(id, data)
+```
+Speichert eine Lehrveranstaltung anhand einer übergebenen ID. Dbaie werden die übergebenen Daten "data" am richtigen Datensatz gesetzt.
+```python
+save_lehrveranstaltungen_file(content)
+```
+Speichert alle Änderungen in die dafür vorgesehene Datei "lehrveranstaltungen.json".
+
+###Studiengänge### {#module-studiengaenge}
+Dieses Modul ist zuständig für die Studiengänge. Sowohl Datenerzeugung, -änderungen und -entfernungen werden hierüber abgehandelt.
+Dafür gibt es eine Klasse, die lediglich über die REST-Methodik erreicht werden soll. CherryPy matcht die benutzten HTTP-Methoden und führt die jeweilige Methode an der Klasse aus.
+
+####Klasse `studiengang.py`
+Zu finden unter ```app/api/studiengang.py```
+
+Jegliche Return-Werte werden in einen JSON-String umgewandelt, bevor diese zurückgegeben werden.
+
+**Methoden**
+```python
+GET(string id = None)
+```
+Siehe [Informationen GET-Methoden](#infos-get-methoden)
+```python
+POST(bezeichnung, kurzbezeichnung, anzahlSemester)
+```
+Siehe [Informationen POST-Methoden](#infos-post-methoden)
+```python
+PUT(id, bezeichnung, kurzbezeichnung, anzahlSemester)
+```
+Siehe [Informationen PUT-Methoden](#infos-put-methoden)
+```python
+DELETE(id)
+```
+Siehe [Informationen DELETE-Methoden](#infos-delete-methoden)
+
+###Module###
+Studiengang-Module werden über dieses Modul konfiguriert. Ebenfalls ist hier lediglich die Datenänderung über die REST-Methodik vorgesehen. Analog zu [Studiengänge](#module-studiengaenge) werden die HTTP-Methoden mittels CherryPy gematcht und ausgeführt.
+
+####Klasse `modul.py`
+Zu finden unter ```app/api/modul.py```
+
+Auch hier werden alle Return-Werte vorm Zurückgeben in einen JSON-String umgewandelt.
+
+**Methoden**
+```python
+GET(string id = None)
+```
+Siehe [Informationen GET-Methoden](#infos-get-methoden)
+```python
+POST(bezeichnung, kurzbezeichnung, sws, kreditpunkte, beschreibung)
+```
+Siehe [Informationen POST-Methoden](#infos-post-methoden)
+```python
+PUT(id, bezeichnung, kurzbezeichnung, sws, kreditpunkte, beschreibung)
+```
+Siehe [Informationen PUT-Methoden](#infos-put-methoden)
+```python
+DELETE(id)
+```
+Siehe [Informationen DELETE-Methoden](#infos-delete-methoden)
+
+###Lehrveranstaltungen###
+Lehrveranstaltungen werden über dieses Modul konfiguriert. Ebenfalls ist hier lediglich die Datenänderung über die REST-Methodik vorgesehen. Analog zu [Studiengänge](#module-studiengaenge) werden die HTTP-Methoden mittels CherryPy gematcht und ausgeführt.
+
+####Klasse `lehrveranstaltung.py`
+Zu finden unter ```app/api/lehrveranstaltung.py```
+
+Auch hier werden alle Return-Werte vorm Zurückgeben in einen JSON-String umgewandelt.
+
+**Methoden**
+```python
+GET(string id = None)
+```
+Siehe [Informationen GET-Methoden](#infos-get-methoden)
+```python
+POST(studiengangId, modulId, semester)
+```
+Siehe [Informationen POST-Methoden](#infos-post-methoden)
+```python
+PUT(id, studiengangId, semester)
+```
+Siehe [Informationen PUT-Methoden](#infos-put-methoden)
+```python
+DELETE(id)
+```
+Siehe [Informationen DELETE-Methoden](#infos-delete-methoden)
+
+###Benutzer###
+Jegliche Abwicklung für Benutzer wird über zwei verschiedene Module abgewickelt: Login-Prozess (Authentifizierung) und Rechte-Verwaltung (Autorisierung).
+
+####Klasse `login.py`####
+Zu finden unter ```app/api/login.py```
+
+Die Authentifizierung erfolgt über die REST-Api, welche dafür vorgesehen ist. Hierfür wird die HTTP-Methode "PUT" verwendet. Zu beachten ist, dass hier **NICHT** die Abwicklung analog zu [Informationen *-Methoden](#infos-get-methoden) erfolgt. Es gibt lediglich eine Methode, welche die Daten an die [User-Klasse](#class-user) weiterleitet.
+
+**Methoden**
+```python
+PUT(benutzername, passwort)
+```
+Diese Methode nimmt die nötigen Login-Daten entgegen und leitet diese an die [User-Klasse](#class-user) weiter.
+Gibt ein "success" inkl. User-ID (hier Benutzername) als JSON-String zurück, falls die Authentifizierung erfolgreich war.
+Sollte die Authentifizierung fehlschlagen, wird ein "error" als JSON-String zurückgegeben.
+Mögliche Rückgabewerte:
+
+_"success"_
+```json
+{
+	"success": true,
+	"id": benutzername
+}
+```
+
+_"error"_
+```json
+{
+	"success": false
+}
+``
+
+####Klasse `user.py`#### {#class-user}
+Zu finden unter ```app/user.py```
+Ist für die Autorisierung und den Login-Prozess zuständig. Mit dieser Klasse werden Rechte abgefragt und das Setzen und Löschen des Cookies abgearbeitet.
+
+
+##Daten## {#daten}
+Jegliche Daten werden als JSON-formatierte Dateien im Ordner ```data``` abgelegt.
+
+###Studiengänge (studiengaenge.json)###
+```json
+{
+	id (String): {
+		"bezeichnung": String,
+		"kurzbezeichnung": String,
+		"anzahlSemester": Integer
+	}
+}
+```
+* **id:** ID, welche zum Laden, Löschen oder Aktualisieren benötigt wird. Wird automatisch vergeben.
+* **bezeichnung:** Lange Bezeichnung des Studienganges
+* **kurzbezeichnung:** Kurze Bezeichnung des Studienganges
+* **anzahlSemester:** Anzahl der Semester, die in der Regel benötigt werden
+
+###Module (module.json)###
+```json
+{
+	id (String): {
+		"bezeichnung": String,
+		"kurzbezeichnung": String,
+		"sws": Integer,
+		"kreditpunkte": Integer,
+		"beschreibung": "String"
+	}
+}
+```
+
+* **id:** ID, welche zum Laden, Löschen oder Aktualisieren benötigt wird. Wird automatisch vergeben.
+* **bezeichnung:** Lange Bezeichnung des Moduls
+* **kurzbezeichnung:** Kurze Bezeichnung des Moduls
+* **sws:** Semesterwochenstunden, die für alle Lehrveranstaltungen zusammen in der Regel anfallen
+* **kreditpunkte:** Kreditpunkte, die bei erfolgreichem Bestehen gutgeschrieben werden
+* **beschreibung:** Beschreibung des Moduls. Enthält z.B. Ziel, Inhalt usw.
+
+###Lehrveranstaltungen (lehrveranstaltungen.json)###
+```json
+{
+	studiengang_id (String): {
+		id (String): {
+			"bezeichnung": String,
+			"modul": Integer,
+			"semester": Integer
+		}
+	}
+}
+```
+
+* **studiengang_id:** Die ID des Studiengangs, zu der die Lehrveranstaltung zugeordnet wurde
+* **id:** ID, welche zum Laden, Löschen oder Aktualisieren benötigt wird. Wird automatisch vergeben.
+* **bezeichnung:** Bezeichnung der Lehrveranstaltung (z.B. Übung)
+* **modul:** ID des Moduls, zu dem die Lehrveranstaltung zugeordnet wird
+* **semester:** Das Semester, in dem die Lehrveranstaltung normalerweise durchgeführt wird
+
+###Benutzer (benutzer.json)###
+Benutzer können nicht über die Web-Oberfläche konfiguriert werden. Diese müssen direkt in der JSON-Datei angelegt oder geändert werden.
+```json
+{
+	benutzer_name (String): {
+		"benutzername": String,
+		"passwort": String,
+		"rolle": String ("admin"|"mod")
+		"module": [Modul-IDs (String)]
+	}
+}
+```
+
+* **benutzer_name:** Benutzername des Benutzers. Dieser muss eindeutig sein, da er als "ID" fungiert
+* **benutzername:** Selbige wie "benutzer_name"
+* **passwort:** Passwort in Klartext, welches der Benutzer beim Login-Prozess angeben muss
+* **rolle:** Rolle (entweder "admin" oder "mod"), welcher der Benutzer erhält
+* **module:** IDs der Module in einem JSON-Array, welche der Benutzer bearbeiten darf. Muss bei Rolle "admin" nicht angegeben werden.
+
+#Client#
+
+##Klassen##
+
+###Klasse `studierender`### {#js-class-studierender}
+Zu finden unter `content/js/app.js`
+
+####Beschreibung und Zusammenwirken####
+Die Klasse `studierender` ist für das Anzeigen und Verarbeiten der Daten für einen Studierenden (ohne Authentifierzierung) nötig.
+Sie regelt die Ansicht auf den verschiedenen Seiten. Da für einen Studierenden jegliche Konfiguration untersagt wird sondern lediglich eine Anzeige zur Verfügung steht, werden keinerlei weitere Aufgaben fällig.
+Die Klasse arbeitet eng mit den Klassen [Database](#js-class-database) und [TemplateManager](#template-manager) zusammen. `studierender` deligiert lediglich an die jeweiligen Klassen weiter. Daten werden über die Datenbank geholt und nach einem erfolgreichen AJAX-Request an den [TemplateManager](#template-manager) weitergeleitet.
+
+###Klasse `mhpflege`### {#js-class-mhpflege}
+Zu finden unter `content/js/mhpflege.js`
+
+####Beschreibung und Zusammenwirken####
+Analog zu [studierender](#js-class-studierender) wird hier die Verarbeitung und Anzeige verwaltet und weiter deligiert. Außerdem wird die Authentifizierung und die Autorisierung übernommen.
+Auch hier werden jegliche Datenflüsse über die Klasse [Database](#js-class-database) abgewickelt und Anzeigen werden über den [TemplateManager](#template-manager) generiert.
+Deswegen spielen die Klassen [Database](#js-class-database) und [TemplateManager](#template-manager) ebenfalls eine sehr wichtige Rolle.
+
+###Klasse `database`### {#js-class-database}
+Zu finden unter `content/js/database.js`
+
+####Beschreibung und Zusammenwirken####
+Wie schon oberhalb beschrieben übernimmt diese Klasse jegliche Verarbeitung von Daten. Es werden hierrüber Daten geladen als auch gespeichert. Genutzt wird dazu die AJAX-Methodik, womit verschiedene HTTP-Requests mit unterschiedlichen HTTP-Methoden ausgeführt werden. Welche das sind und wofür die HTTP-Methoden stehen, wird weiter oben unter [REST-Interface](#rest-interface) beschrieben.
+
+##Eventservice##
+Der Eventservice wird lediglich zum Laden der Templates genutzt. Der [TemplateManager](#template-manager) feuert ein Event, wenn er alle Templates erfolgreich geladen hat.
+Danach wird alles über die Klassen [mhpflege](#js-class-mhpflege) und [studierender](#js-class-studierender) abgehandelt.
+
+##Templateverarbeitung##
+Alle Templates werden einmalig bei dem Aufruf der Seite geladen. Diese werden am TemplateManager gespeichert.
+
+###Template `adm_lehrveranstaltung_add`###
+Dieses Template wird verwendet, wenn eine Lehrveranstaltung hinzugefügt wird.
+
+###Template `adm_lehrveranstaltung_edit`###
+Wird verwendet, wenn eine Lehrveranstaltung bearbeitet wird.
+
+###Template `adm_modul_create`###
+Wird verwendet, wenn ein Modul hinzugefügt werden soll.
+
+###Template `adm_modul_edit`###
+Wird verwendet, wenn ein Modul aktualisiert wird.
+
+###Template `adm_module`###
+Liefert eine Liste aller Module aus.
+
+###Template `adm_studiengaenge`###
+Liefert eine Liste zur Bearbeitung aller Studiengänge aus.
+
+###Template `adm_studiengang_create`###
+Wird verwendet, wenn ein Studiengang hinzugefügt werden soll.
+
+###Template `adm_studiengang_edit`###
+Wird verwendet, wenn ein Studiengang bearbeitet wird.
+
+###Template `login`###
+Wird verwendet, wenn sich ein Benutzer authentifizieren soll.
+
+###Template `modulhandbuch`###
+Liefert eine Liste aller Lehrveranstaltungen inkl. Module zu einem Studiengang aus.
+
+###Template `studiengaenge`###
+Liefert eine Liste für eine reine Anzeige aller Studiengänge aus.
+
+#Prüfung Markup#
+Alle generierten Markups wurden durch den W3C-Validator als gültig empfunden.
+
